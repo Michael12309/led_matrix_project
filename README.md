@@ -5,3 +5,5 @@ It uses this submodule https://github.com/hzeller/rpi-rgb-led-matrix.git to simp
 
 Result here:
 ![LED Matrix Final](https://github.com/Michael12309/led_matrix_project/assets/40968057/18b14a91-ef0a-4891-932d-4bc7f8140aa1)
+
+(Updates live using the Yahoo Finance API)
