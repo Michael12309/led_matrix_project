@@ -1,6 +1,6 @@
 # LED Matrix
 
-This is made with a Raspberry Pi and a [Adafruit RGB LED Matrix](https://www.adafruit.com/product/2279).
+This is made with a Raspberry Pi and an [Adafruit RGB LED Matrix](https://www.adafruit.com/product/2279).
 It uses this submodule https://github.com/hzeller/rpi-rgb-led-matrix.git to simplify reading and writing to the LED matrix in CPython.
 
 Result here:
