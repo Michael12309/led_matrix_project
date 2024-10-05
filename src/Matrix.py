@@ -1,17 +1,19 @@
 from PIL import Image, ImageFont, ImageDraw
 
 class Matrix(object):
-    def __init__(self, brightness=100, debug=False):
+    def __init__(self, width, height, brightness=100, debug=False):
         self.debug = debug
-        
+        self.width = width
+        self.height = height
+
         if not self.debug:
             from rgbmatrix import RGBMatrix, RGBMatrixOptions
             from rgbmatrix import graphics
             
             # Configuration for the matrix
             options = RGBMatrixOptions()
-            options.rows = 32
-            options.cols = 64
+            options.rows = self.height
+            options.cols = self.width
             options.chain_length = 1
             options.parallel = 1
             options.brightness = brightness # cliArgs.led_brightness
@@ -25,7 +27,7 @@ class Matrix(object):
             self.font_small = graphics.Font()
             self.font_small.LoadFont("assets/fonts/4x6.bdf")
         else:
-            self.led_board = Image.new(mode='RGB', size=(64, 32), color=(0,0,0))
+            self.led_board = Image.new(mode='RGB', size=(self.width, self.height), color=(0,0,0))
             self.draw = ImageDraw.Draw(self.led_board)
             self.debug_font_medium = ImageFont.load("assets/fonts/5x7.pil")
             self.debug_font_small = ImageFont.load("assets/fonts/4x6.pil")
@@ -50,5 +52,5 @@ class Matrix(object):
 
     def debugShow(self):
         if self.debug:
-            large = self.led_board.resize((64*15, 32*15), Image.Resampling.NEAREST)
+            large = self.led_board.resize((self.width*15, self.height*15), Image.Resampling.NEAREST)
             large.show()
