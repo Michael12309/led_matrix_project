@@ -1,6 +1,5 @@
 from utils import args
 import time
-import sys
 from PIL import Image
 import io
 import PIL
