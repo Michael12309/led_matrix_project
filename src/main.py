@@ -8,18 +8,64 @@ import yfinance as yf
 from Matrix import Matrix
 from datetime import date
 from datetime import timedelta
+import requests
+import datetime
 
 if __name__ == "__main__":
     cliArgs = args()
 
     matrix_width = 64
     matrix_height = 64
-    matrix = Matrix(matrix_width, matrix_height, brightness=cliArgs.led_brightness, debug=cliArgs.debug)
+    matrix = Matrix(matrix_width, matrix_height,
+                    brightness=cliArgs.led_brightness, debug=cliArgs.debug)
 
+    API_KEY = '3900fcdee758bc477e8344f8519b9ad6'
+    CITY = 'Rancho Santa Margarita'
 
-    matrix.drawText("nika chu", "medium", (1, 7), (255, 180, 180))
-    matrix.drawText("nika chu", "small", (1, 13), (160, 190, 160))
-    matrix.debugShow()
+    # OpenWeatherMap API URL
+    url = f'http://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric'
+
+    while True:
+        try:
+            # Send request
+            response = requests.get(url)
+            data = response.json()
+
+            # Get weather info
+            current_weather = data['weather'][0]['description']
+            current_temp_c = data['main']['temp']
+            high_temp_c = data['main']['temp_max']
+            low_temp_c = data['main']['temp_min']
+
+            # Convert to Fahrenheit
+            current_temp_f = (current_temp_c * 9/5) + 32
+            high_temp_f = (high_temp_c * 9/5) + 32
+            low_temp_f = (low_temp_c * 9/5) + 32
+
+            # Get sunrise and sunset times
+            sunrise = datetime.datetime.fromtimestamp(
+                data['sys']['sunrise']).strftime('%#I:%M%p').lower()
+            sunset = datetime.datetime.fromtimestamp(
+                data['sys']['sunset']).strftime('%#I:%M%p').lower()
+
+            # Print results
+            matrix.drawText(f"{current_weather.title()}",
+                            "medium", (1, 7), (100, 245, 129))
+            matrix.drawText(f"{current_temp_f:.1f}°F",
+                            "medium", (1, 15), (100, 245, 129))
+            matrix.drawText(f"High: {high_temp_f:.1f}°F",
+                            "small", (1, 41), (198, 174, 245))
+            matrix.drawText(f"Low: {low_temp_f:.1f}°F", "small",
+                            (1, 48), (198, 174, 245))
+            matrix.drawText(f"Sunrise: {sunrise}",
+                            "small", (1, 55), (216, 245, 100))
+            matrix.drawText(f"Sunset: {sunset}",
+                            "small", (1, 62), (216, 245, 100))
+            matrix.debugShow()
+        except:
+            print("Exception")
+
+        time.sleep(60*20)
 
     # color_green = (69, 221, 110)
     # color_green_inverted = (186, 34, 145)
@@ -31,10 +77,10 @@ if __name__ == "__main__":
     # yesterday = (date.today() - timedelta(days = 1)).strftime("%m/%d/%Y")
 
     # ticker = 'TRST'
-    
+
     # while True:
     #     data = yf.download(tickers=ticker, period='5d', interval='1m', prepost=True)
-        
+
     #     x = 0 # wrong datatype but it works
     #     y = 0 # ^
     #     previous_close = 0
@@ -44,10 +90,10 @@ if __name__ == "__main__":
     #     try:
     #         previous_close = data[data.index.strftime("%m/%d/%Y").str.contains(yesterday)]['Adj Close'][-1]
     #         data = data[data.index.strftime("%m/%d/%Y").str.contains(today)]
-            
+
     #         x = data.index.to_series().to_numpy()
     #         y = data['Adj Close'].to_numpy()
-            
+
     #         starting_price = data['Open'][0]
     #         last_price = data['Adj Close'][-1]
     #     except IndexError:
