@@ -1,10 +1,6 @@
 from utils import args
 import time
-from PIL import Image
 import io
-import PIL
-import matplotlib.pyplot as plt
-import yfinance as yf
 from Matrix import Matrix
 from datetime import date
 from datetime import timedelta
@@ -20,7 +16,7 @@ if __name__ == "__main__":
                     brightness=cliArgs.led_brightness, debug=cliArgs.debug)
 
     API_KEY = '3900fcdee758bc477e8344f8519b9ad6'
-    CITY = 'Rancho Santa Margarita'
+    CITY = 'Buffalo'
 
     # OpenWeatherMap API URL
     url = f'http://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric'
@@ -61,7 +57,7 @@ if __name__ == "__main__":
                             "small", (1, 55), (216, 245, 100))
             matrix.drawText(f"Sunset: {sunset}",
                             "small", (1, 62), (216, 245, 100))
-            matrix.debugShow()
+            # matrix.debugShow()
         except:
             print("Exception")
 

@@ -22,10 +22,10 @@ class Matrix(object):
             self.matrix = RGBMatrix(options=options)
         
             self.font_medium = graphics.Font()
-            self.font_medium.LoadFont("assets/fonts/5x7.bdf")
+            self.font_medium.LoadFont("../assets/fonts/5x7.bdf")
 
             self.font_small = graphics.Font()
-            self.font_small.LoadFont("assets/fonts/4x6.bdf")
+            self.font_small.LoadFont("../assets/fonts/4x6.bdf")
         else:
             self.led_board = Image.new(mode='RGB', size=(self.width, self.height), color=(0,0,0))
             self.draw = ImageDraw.Draw(self.led_board)
