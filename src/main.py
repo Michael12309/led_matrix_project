@@ -57,10 +57,10 @@ if __name__ == "__main__":
                             "small", (1, 55), (216, 245, 100))
             matrix.drawText(f"Sunset: {sunset}",
                             "small", (1, 62), (216, 245, 100))
-            # matrix.debugShow()
         except:
             print("Exception")
 
+        matrix.debugShow()
         time.sleep(60*20)
 
     # color_green = (69, 221, 110)

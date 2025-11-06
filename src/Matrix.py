@@ -29,8 +29,8 @@ class Matrix(object):
         else:
             self.led_board = Image.new(mode='RGB', size=(self.width, self.height), color=(0,0,0))
             self.draw = ImageDraw.Draw(self.led_board)
-            self.debug_font_medium = ImageFont.load("assets/fonts/5x7.pil")
-            self.debug_font_small = ImageFont.load("assets/fonts/4x6.pil")
+            self.debug_font_medium = ImageFont.load("../assets/fonts/5x7.pil")
+            self.debug_font_small = ImageFont.load("../assets/fonts/4x6.pil")
 
     def drawImage(self, img, pos):
         if not self.debug:
