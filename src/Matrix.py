@@ -50,6 +50,12 @@ class Matrix(object):
             adjust_height = -5 if font_size == 'small' else -6
             self.draw.text((pos[0], pos[1] + adjust_height), text, fill=(color[0], color[1], color[2]), font=font)
 
+    def clear(self):
+        if not self.debug:
+            self.matrix.Clear()
+        else:
+            self.draw.rectangle([(0,0), (self.width, self.height)], fill=(0,0,0))
+
     def debugShow(self):
         if self.debug:
             large = self.led_board.resize((self.width*15, self.height*15), Image.Resampling.NEAREST)
