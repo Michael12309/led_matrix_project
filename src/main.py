@@ -30,10 +30,10 @@ if __name__ == "__main__":
             months = days // 30
             
             # Display
-            matrix.drawText(f"Day {days}", "medium", (20, 27), (178, 34, 52))
-            matrix.drawText(f"Week {weeks}", "medium", (20, 40), (255, 255, 255))
-            matrix.drawText(f"Month {months}", "medium", (19, 53), (60, 59, 110))
-            matrix.drawText(f"Second {total_seconds}", "medium", (19, 66), (216, 245, 100))
+            matrix.drawText(f"Day {days}", "medium", (20, 21), (178, 34, 52))
+            matrix.drawText(f"Week {weeks}", "medium", (20, 34), (255, 255, 255))
+            matrix.drawText(f"Month {months}", "medium", (17, 47), (60, 59, 110))
+            matrix.drawText(f"{total_seconds}", "medium", (17, 60), (216, 245, 100))
             
         except Exception as e:
             print(f"Exception: {e}")
