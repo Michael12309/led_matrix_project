@@ -16,7 +16,7 @@ if __name__ == "__main__":
                     brightness=cliArgs.led_brightness, debug=cliArgs.debug)
 
     # Start date: October 2, 2025
-    start_date = datetime.datetime(2025, 10, 2, 0, 0, 0)
+    start_date = datetime.datetime(2025, 10, 1, 0, 0, 0)
 
 
     while True:
