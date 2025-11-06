@@ -7,6 +7,11 @@ from datetime import timedelta
 import requests
 import datetime
 
+def center_text(text, matrix_width=64, char_width=4, char_spacing=1):
+    text_width = len(text) * char_width + (len(text) - 1) * char_spacing
+    x_position = (matrix_width - text_width) // 2
+    return x_position
+
 if __name__ == "__main__":
     cliArgs = args()
 
@@ -14,6 +19,12 @@ if __name__ == "__main__":
     matrix_height = 64
     matrix = Matrix(matrix_width, matrix_height,
                     brightness=cliArgs.led_brightness, debug=cliArgs.debug)
+
+
+
+    # Split
+    workout_split = [ "Chest/Abs", "Back", "Legs", "Arms", "Rest" ]
+    workout_split_seed = 1
 
     # Start date: October 2, 2025
     start_date = datetime.datetime(2025, 10, 1, 0, 0, 0)
@@ -32,10 +43,11 @@ if __name__ == "__main__":
             time_str = current_time.strftime('%I:%M:%S %p')
 
             # Display
-            matrix.drawText(f"Day {days}", "medium", (19, 16), (178, 34, 52))
-            matrix.drawText(f"Week {weeks}", "medium", (19, 29), (255, 255, 255))
-            matrix.drawText(f"Month {months}", "medium", (16, 42), (60, 59, 110))
-            matrix.drawText(f"{time_str}", "medium", (5, 60), (255, 255, 255))
+            matrix.drawText(f"Day {days}", "medium", (center_text(f"Day {days}"), 10), (178, 34, 52))
+            matrix.drawText(f"Week {weeks}", "medium", (center_text(f"Week {weeks}"), 20), (255, 255, 255))
+            matrix.drawText(f"Month {months}", "medium", (center_text(f"Month {months}"), 30), (60, 59, 110))
+            matrix.drawText(f"{workout_split[(days + workout_split_seed) % len(workout_split)]}", "medium", (center_text(workout_split[(days + workout_split_seed) % len(workout_split)]), 50), (255, 255, 255))
+            matrix.drawText(f"{time_str}", "medium", (center_text(time_str), 60), (180, 180, 180))
             
         except Exception as e:
             print(f"Exception: {e}")
