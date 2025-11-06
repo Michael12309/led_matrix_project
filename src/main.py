@@ -29,11 +29,13 @@ if __name__ == "__main__":
             weeks = days // 7
             months = days // 30
             
+            time_str = current_time.strftime('%I:%M:%S %p')
+
             # Display
-            matrix.drawText(f"Day {days}", "medium", (20, 21), (178, 34, 52))
-            matrix.drawText(f"Week {weeks}", "medium", (20, 34), (255, 255, 255))
-            matrix.drawText(f"Month {months}", "medium", (17, 47), (60, 59, 110))
-            matrix.drawText(f"{total_seconds}", "medium", (17, 60), (216, 245, 100))
+            matrix.drawText(f"Day {days}", "medium", (19, 16), (178, 34, 52))
+            matrix.drawText(f"Week {weeks}", "medium", (19, 29), (255, 255, 255))
+            matrix.drawText(f"Month {months}", "medium", (16, 42), (60, 59, 110))
+            matrix.drawText(f"{time_str}", "medium", (5, 60), (255, 255, 255))
             
         except Exception as e:
             print(f"Exception: {e}")
