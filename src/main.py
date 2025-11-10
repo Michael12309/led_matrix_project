@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
 
     # Split
-    workout_split = [ "Push", "Rest/Mobility", "Pull", "Legs" ]
+    workout_split = [ "Push", "Run/Mobility", "Pull", "Legs" ]
     workout_split_seed = 1
 
     # Start date: October 2, 2025
