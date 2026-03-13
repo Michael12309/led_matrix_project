@@ -94,16 +94,16 @@ if __name__ == "__main__":
             time_str = current_time.strftime('%I:%M:%S %p')
 
             # --- Country section ---
-            matrix.drawText("COUNTRY", "small", (center_text("COUNTRY", char_width=3), 7), (150, 120, 50))
-            matrix.drawText(country, "medium", (center_text(country), 17), (255, 200, 80))
+            matrix.drawText("COUNTRY", "small", (center_text("COUNTRY", char_width=3), 7), (80, 80, 80))
+            matrix.drawText(country, "medium", (center_text(country), 17), (230, 180, 60))
 
             # --- Separator ---
-            matrix.drawHLine(21, 4, 59, (60, 50, 25))
+            matrix.drawHLine(21, 4, 59, (40, 40, 40))
 
             # --- Workout section ---
-            matrix.drawText(f"Day {day}", "medium", (center_text(f"Day {day}"), 31), (255, 100, 60))
-            matrix.drawText(workout, "medium", (center_text(workout), 43), (70, 200, 170))
-            matrix.drawText(time_str, "medium", (center_text(time_str), 57), (100, 130, 180))
+            matrix.drawText(f"Day {day}", "medium", (center_text(f"Day {day}"), 32), (220, 220, 220))
+            matrix.drawText(workout, "medium", (center_text(workout), 43), (180, 180, 180))
+            matrix.drawText(time_str, "medium", (center_text(time_str), 54), (80, 80, 80))
 
         except Exception as e:
             print(f"Exception: {e}")
