@@ -1,9 +1,7 @@
 from utils import args
 import time
-import io
 from Matrix import Matrix
 from datetime import date
-from datetime import timedelta
 import datetime
 import random
 
@@ -75,7 +73,7 @@ if __name__ == "__main__":
     # Start date: October 2, 2025
     start_date = datetime.datetime(2025, 10, 2, 0, 0, 0)
 
-    # Country of the day (recomputed each loop in case day changes at midnight)
+    # Country of the day (recomputed when date changes at midnight)
     last_country_date = None
     country = ""
 
@@ -95,11 +93,17 @@ if __name__ == "__main__":
             workout = workout_split[(day + workout_split_seed) % len(workout_split)]
             time_str = current_time.strftime('%I:%M:%S %p')
 
-            # Display
-            matrix.drawText(country, "small", (center_text(country, char_width=3), 8), (255, 200, 50))
-            matrix.drawText(f"Day {day}", "medium", (center_text(f"Day {day}"), 24), (178, 34, 52))
-            matrix.drawText(workout, "medium", (center_text(workout), 40), (255, 255, 255))
-            matrix.drawText(time_str, "medium", (center_text(time_str), 56), (160, 160, 160))
+            # --- Country section ---
+            matrix.drawText("COUNTRY", "small", (center_text("COUNTRY", char_width=3), 7), (150, 120, 50))
+            matrix.drawText(country, "medium", (center_text(country), 17), (255, 200, 80))
+
+            # --- Separator ---
+            matrix.drawHLine(21, 4, 59, (60, 50, 25))
+
+            # --- Workout section ---
+            matrix.drawText(f"Day {day}", "medium", (center_text(f"Day {day}"), 31), (255, 100, 60))
+            matrix.drawText(workout, "medium", (center_text(workout), 43), (70, 200, 170))
+            matrix.drawText(time_str, "medium", (center_text(time_str), 57), (100, 130, 180))
 
         except Exception as e:
             print(f"Exception: {e}")

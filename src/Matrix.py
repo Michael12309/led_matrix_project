@@ -50,6 +50,13 @@ class Matrix(object):
             adjust_height = -5 if font_size == 'small' else -6
             self.draw.text((pos[0], pos[1] + adjust_height), text, fill=(color[0], color[1], color[2]), font=font)
 
+    def drawHLine(self, y, x_start, x_end, color):
+        if not self.debug:
+            from rgbmatrix import graphics
+            graphics.DrawLine(self.matrix, x_start, y, x_end, y, graphics.Color(color[0], color[1], color[2]))
+        else:
+            self.draw.line([(x_start, y), (x_end, y)], fill=(color[0], color[1], color[2]))
+
     def clear(self):
         if not self.debug:
             self.matrix.Clear()
