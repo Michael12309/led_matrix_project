@@ -34,7 +34,6 @@ if __name__ == "__main__":
         last_price = 0
         first_open = 0
         try:
-            print(data)
             if data.empty:
                 raise IndexError("No data returned")
             today_data = data[data.index.normalize() == pd.Timestamp(date.today(), tz=data.index.tz)]
