@@ -25,7 +25,7 @@ if __name__ == "__main__":
     ticker = 'TRST'
 
     while True:
-        data = yf.download(tickers=ticker, period='5d', interval='1m', prepost=True)
+        data = yf.download(tickers=ticker, period='5d', interval='1m', prepost=True, multi_level_index=False)
         
         x = 0 # wrong datatype but it works
         y = 0 # ^
@@ -35,6 +35,8 @@ if __name__ == "__main__":
         first_open = 0
         try:
             print(data)
+            if data.empty:
+                raise IndexError("No data returned")
             today_data = data[data.index.normalize() == pd.Timestamp(date.today(), tz=data.index.tz)]
             previous_data = data[data.index < today_data.index[0]]
             previous_close = previous_data['Close'].iloc[-1]
