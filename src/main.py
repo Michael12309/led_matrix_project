@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 from Matrix import Matrix
 from datetime import date
-from datetime import timedelta
+import pandas as pd
 
 if __name__ == "__main__":
     cliArgs = args()
@@ -22,13 +22,10 @@ if __name__ == "__main__":
     color_red = (221, 69, 69)
     color_red_inverted = (34, 186, 186)
 
-    today = date.today().strftime("%m/%d/%Y")
-    yesterday = (date.today() - timedelta(days = 1)).strftime("%m/%d/%Y")
-
     ticker = 'TRST'
-    
+
     while True:
-        data = yf.download(tickers=ticker, period='5d', interval='1m', prepost=True)
+        data = yf.download(tickers=ticker, period='5d', interval='1m', prepost=True, multi_level_index=False)
         
         x = 0 # wrong datatype but it works
         y = 0 # ^
@@ -37,14 +34,17 @@ if __name__ == "__main__":
         last_price = 0
         first_open = 0
         try:
-            previous_close = data[data.index.strftime("%m/%d/%Y").str.contains(yesterday)]['Adj Close'][-1]
-            data = data[data.index.strftime("%m/%d/%Y").str.contains(today)]
+            print(data)
+            today_data = data[data.index.normalize() == pd.Timestamp(date.today(), tz=data.index.tz)]
+            previous_data = data[data.index < today_data.index[0]]
+            previous_close = previous_data['Close'].iloc[-1]
+            data = today_data
             
             x = data.index.to_series().to_numpy()
-            y = data['Adj Close'].to_numpy()
+            y = data['Close'].to_numpy()
             
-            starting_price = data['Open'][0]
-            last_price = data['Adj Close'][-1]
+            starting_price = data['Open'].iloc[0]
+            last_price = data['Close'].iloc[-1]
         except IndexError:
             print('Error: No data points, trying again in 5 seconds')
             time.sleep(5)
