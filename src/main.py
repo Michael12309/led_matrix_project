@@ -25,7 +25,7 @@ if __name__ == "__main__":
     ticker = 'TRST'
 
     while True:
-        data = yf.download(tickers=ticker, period='5d', interval='1m', prepost=True, multi_level_index=False)
+        data = yf.download(tickers=ticker, period='5d', interval='1m', prepost=True)
         
         x = 0 # wrong datatype but it works
         y = 0 # ^
