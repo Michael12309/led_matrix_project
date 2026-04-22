@@ -34,10 +34,12 @@ class Matrix(object):
 
     def drawImage(self, img, pos):
         if not self.debug:
-            self.matrix.Clear()
-            self.matrix.SetImage(img, pos[0], pos[1])
+            self.matrix.SetImage(img.convert('RGB'), pos[0], pos[1])
         else:
-            self.led_board.paste(img, pos)
+            if img.mode == 'RGBA':
+                self.led_board.paste(img, pos, img)
+            else:
+                self.led_board.paste(img, pos)
             
     def drawText(self, text, font_size, pos, color):
         if not self.debug:

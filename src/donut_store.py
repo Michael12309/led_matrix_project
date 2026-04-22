@@ -8,5 +8,5 @@ def load_donuts():
         with open(DONUT_FILE, 'r') as f:
             data = json.load(f)
         return data.get('michael_owes', 0), data.get('tyler_owes', 0)
-    except (FileNotFoundError, json.JSONDecodeError):
+    except (FileNotFoundError, json.JSONDecodeError, PermissionError):
         return 0, 0

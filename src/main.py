@@ -3,24 +3,9 @@ import time
 from Matrix import Matrix
 from datetime import date
 import datetime
+from PIL import Image
 from donut_store import load_donuts
 from uv_fetch import get_uv_index
-
-# --- Donut sprite (7x7) ---
-_ = None
-O = (200, 100, 140)   # outline / icing edge
-P = (240, 150, 180)   # pink frosting
-D = (180, 120, 60)    # dough
-
-DONUT_SPRITE = [
-    [_, _, O, O, O, _, _],
-    [_, O, P, P, P, O, _],
-    [O, P, _, _, _, D, O],
-    [O, P, _, _, _, D, O],
-    [O, D, _, _, _, D, O],
-    [_, O, D, D, D, O, _],
-    [_, _, O, O, O, _, _],
-]
 
 def center_text(text, matrix_width=64, font_size="small"):
     char_width = 3 if font_size == "small" else 5
@@ -69,6 +54,9 @@ if __name__ == "__main__":
 
     MAX_DONUTS = 10
 
+    # Load donut image
+    donut_img = Image.open("../assets/donut_14x14.png")
+
     while True:
         try:
             current_time = datetime.datetime.now()
@@ -99,8 +87,8 @@ if __name__ == "__main__":
             draw_bar(matrix, 43, 9, 15, 15, tyler_owes, MAX_DONUTS,
                      (40, 140, 220), (50, 50, 50))
 
-            # Donut icon centered between bars
-            matrix.drawSprite(DONUT_SPRITE, 28, 12)
+            # Donut image centered between bars
+            matrix.drawImage(donut_img, (25, 10))
 
             # Count numbers below bars
             m_str = str(michael_owes)
