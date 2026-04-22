@@ -5,7 +5,7 @@ from Matrix import Matrix
 from datetime import date
 import datetime
 from PIL import Image
-from donut_store import load_donuts
+from donut_store import load_donuts, init_donuts
 from uv_fetch import get_uv_index
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -45,6 +45,10 @@ def draw_bar(matrix, x, y, width, height, count, max_count, fill_color, outline_
 if __name__ == "__main__":
     cliArgs = args()
 
+    # Load assets before Matrix init (rgbmatrix drops root privileges to UID 1)
+    donut_img = Image.open(os.path.join(PROJECT_DIR, 'assets', 'donut_14x14.png'))
+    init_donuts()
+
     matrix_width = 64
     matrix_height = 64
     matrix = Matrix(matrix_width, matrix_height,
@@ -56,9 +60,6 @@ if __name__ == "__main__":
     start_date = datetime.datetime(2025, 10, 2, 0, 0, 0)
 
     MAX_DONUTS = 10
-
-    # Load donut image
-    donut_img = Image.open(os.path.join(PROJECT_DIR, 'assets', 'donut_14x14.png'))
 
     while True:
         try:
