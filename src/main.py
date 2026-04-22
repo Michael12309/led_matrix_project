@@ -55,8 +55,6 @@ if __name__ == "__main__":
                     brightness=cliArgs.led_brightness, debug=cliArgs.debug)
 
     # Workout config
-    workout_split = ["Push", "Run/Mobility", "Pull", "Legs"]
-    workout_split_seed = 2
     start_date = datetime.datetime(2025, 10, 2, 0, 0, 0)
 
     MAX_DONUTS = 10
@@ -67,7 +65,6 @@ if __name__ == "__main__":
             elapsed = current_time - start_date
             day = elapsed.days + 1
 
-            workout = workout_split[(day + workout_split_seed) % len(workout_split)]
             time_str = current_time.strftime('%I:%M:%S %p')
 
             michael_owes, tyler_owes = load_donuts()
@@ -105,30 +102,29 @@ if __name__ == "__main__":
                             (200, 200, 200))
 
             # === Separator ===
-            matrix.drawHLine(26, 4, 59, (40, 40, 40))
+            matrix.drawHLine(27, 4, 59, (40, 40, 40))
 
-            # === Section 2: UV Index (rows 27-36) ===
+            # === Section 2: UV Index ===
             uv_color = get_uv_color(uv)
-            matrix.drawText("UV", "small", (2, 34), (160, 160, 160))
-            matrix.drawText(str(uv), "medium", (14, 34), uv_color)
-            # Color bar
-            matrix.drawRect(2, 35, 60, 2, uv_color)
+            matrix.drawText("UV", "small", (2, 35), (160, 160, 160))
+            matrix.drawText(str(uv), "medium", (14, 35), uv_color)
+            matrix.drawRect(2, 37, 60, 2, uv_color)
 
             # === Separator ===
-            matrix.drawHLine(37, 4, 59, (40, 40, 40))
+            matrix.drawHLine(40, 4, 59, (40, 40, 40))
 
-            # === Section 3: Workout (rows 38-50) ===
+            # === Section 3: Day Counter ===
             day_str = f"Day {day}"
             matrix.drawText(day_str, "medium",
-                            (center_text(day_str, font_size="medium"), 44),
+                            (center_text(day_str, font_size="medium"), 48),
                             (220, 220, 220))
-            matrix.drawText(workout, "small",
-                            (center_text(workout, font_size="small"), 50),
-                            (180, 180, 180))
 
-            # === Section 4: Time (rows 51-63) ===
+            # === Separator ===
+            matrix.drawHLine(52, 4, 59, (40, 40, 40))
+
+            # === Section 4: Time ===
             matrix.drawText(time_str, "medium",
-                            (center_text(time_str, font_size="medium"), 59),
+                            (center_text(time_str, font_size="medium"), 60),
                             (80, 80, 80))
 
         except Exception as e:
