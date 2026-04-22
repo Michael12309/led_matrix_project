@@ -8,7 +8,10 @@ def init_donuts():
     """Make data/donuts.json accessible after rgbmatrix drops to UID 1.
     Must be called before Matrix init while still running as root."""
     data_dir = os.path.join(_PROJECT_DIR, 'data')
-    for d in [os.path.expanduser('~'), _PROJECT_DIR, data_dir]:
+    # Walk all parent dirs from root to data/ to ensure UID 1 can traverse
+    parts = os.path.normpath(data_dir).split(os.sep)
+    dirs = [os.sep.join(parts[:i+1]) or os.sep for i in range(len(parts))]
+    for d in dirs:
         try:
             st = os.stat(d)
             if not (st.st_mode & 0o001):
