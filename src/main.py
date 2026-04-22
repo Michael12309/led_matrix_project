@@ -3,60 +3,56 @@ import time
 from Matrix import Matrix
 from datetime import date
 import datetime
-import random
+from donut_store import load_donuts
+from uv_fetch import get_uv_index
 
-COUNTRIES = [
-    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola",
-    "Antigua & Barbuda", "Argentina", "Armenia", "Australia", "Austria",
-    "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados",
-    "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
-    "Bolivia", "Bosnia", "Botswana", "Brazil", "Brunei",
-    "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia",
-    "Cameroon", "Canada", "C.A.R.", "Chad", "Chile",
-    "China", "Colombia", "Comoros", "Congo", "Costa Rica",
-    "Croatia", "Cuba", "Cyprus", "Czechia", "Denmark",
-    "Djibouti", "Dominica", "Dominican Rep.", "DR Congo", "Ecuador",
-    "Egypt", "El Salvador", "Eq. Guinea", "Eritrea", "Estonia",
-    "Eswatini", "Ethiopia", "Fiji", "Finland", "France",
-    "Gabon", "Gambia", "Georgia", "Germany", "Ghana",
-    "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau",
-    "Guyana", "Haiti", "Honduras", "Hungary", "Iceland",
-    "India", "Indonesia", "Iran", "Iraq", "Ireland",
-    "Israel", "Italy", "Ivory Coast", "Jamaica", "Japan",
-    "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo",
-    "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon",
-    "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania",
-    "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives",
-    "Mali", "Malta", "Marshall Isl.", "Mauritania", "Mauritius",
-    "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia",
-    "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia",
-    "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua",
-    "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway",
-    "Oman", "Pakistan", "Palau", "Palestine", "Panama",
-    "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland",
-    "Portugal", "Qatar", "Romania", "Russia", "Rwanda",
-    "Samoa", "San Marino", "Sao Tome", "Saudi Arabia", "Senegal",
-    "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia",
-    "Slovenia", "Solomon Isl.", "Somalia", "South Africa", "South Korea",
-    "South Sudan", "Spain", "Sri Lanka", "St. Kitts&Nevis", "St. Lucia",
-    "St. Vincent", "Sudan", "Suriname", "Sweden", "Switzerland",
-    "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand",
-    "Timor-Leste", "Togo", "Tonga", "Trinidad&Tobago", "Tunisia",
-    "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine",
-    "UAE", "UK", "USA", "Uruguay", "Uzbekistan",
-    "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen",
-    "Zambia", "Zimbabwe",
+# --- Donut sprite (7x7) ---
+_ = None
+O = (200, 100, 140)   # outline / icing edge
+P = (240, 150, 180)   # pink frosting
+D = (180, 120, 60)    # dough
+
+DONUT_SPRITE = [
+    [_, _, O, O, O, _, _],
+    [_, O, P, P, P, O, _],
+    [O, P, _, _, _, D, O],
+    [O, P, _, _, _, D, O],
+    [O, D, _, _, _, D, O],
+    [_, O, D, D, D, O, _],
+    [_, _, O, O, O, _, _],
 ]
 
-def center_text(text, matrix_width=64, char_width=4, char_spacing=1):
+def center_text(text, matrix_width=64, font_size="small"):
+    char_width = 3 if font_size == "small" else 5
+    char_spacing = 1
     text_width = len(text) * char_width + (len(text) - 1) * char_spacing
-    x_position = (matrix_width - text_width) // 2
-    return max(x_position, 0)
+    return max((matrix_width - text_width) // 2, 0)
 
-def get_country_of_the_day():
-    today = date.today()
-    random.seed(today.toordinal())
-    return random.choice(COUNTRIES)
+def center_text_in_half(text, half_start, half_width=32, font_size="small"):
+    char_width = 3 if font_size == "small" else 5
+    char_spacing = 1
+    text_width = len(text) * char_width + (len(text) - 1) * char_spacing
+    return half_start + max((half_width - text_width) // 2, 0)
+
+def get_uv_color(uv):
+    if uv <= 2:
+        return (0, 180, 0)
+    elif uv <= 5:
+        return (220, 200, 0)
+    elif uv <= 7:
+        return (220, 130, 0)
+    elif uv <= 10:
+        return (220, 30, 30)
+    else:
+        return (180, 0, 220)
+
+def draw_bar(matrix, x, y, width, height, count, max_count, fill_color, outline_color):
+    matrix.drawRectOutline(x, y, width, height, outline_color)
+    if count > 0:
+        fill_height = round(count / max_count * (height - 2))
+        fill_height = max(fill_height, 1)
+        fill_y = y + height - 1 - fill_height
+        matrix.drawRect(x + 1, fill_y, width - 2, fill_height, fill_color)
 
 if __name__ == "__main__":
     cliArgs = args()
@@ -66,49 +62,87 @@ if __name__ == "__main__":
     matrix = Matrix(matrix_width, matrix_height,
                     brightness=cliArgs.led_brightness, debug=cliArgs.debug)
 
-    # Split
-    workout_split = [ "Push", "Run/Mobility", "Pull", "Legs" ]
+    # Workout config
+    workout_split = ["Push", "Run/Mobility", "Pull", "Legs"]
     workout_split_seed = 2
-
-    # Start date: October 2, 2025
     start_date = datetime.datetime(2025, 10, 2, 0, 0, 0)
 
-    # Country of the day (recomputed when date changes at midnight)
-    last_country_date = None
-    country = ""
+    MAX_DONUTS = 10
 
     while True:
         try:
             current_time = datetime.datetime.now()
             elapsed = current_time - start_date
-
-            day = (elapsed.days) + 1
-
-            # Update country when the date changes
-            today = date.today()
-            if today != last_country_date:
-                country = get_country_of_the_day()
-                last_country_date = today
+            day = elapsed.days + 1
 
             workout = workout_split[(day + workout_split_seed) % len(workout_split)]
             time_str = current_time.strftime('%I:%M:%S %p')
 
-            # --- Country section ---
-            matrix.drawText("COUNTRY", "small", (center_text("COUNTRY", char_width=3), 7), (80, 80, 80))
-            matrix.drawText(country, "medium", (center_text(country), 17), (230, 180, 60))
+            michael_owes, tyler_owes = load_donuts()
+            michael_owes = min(michael_owes, MAX_DONUTS)
+            tyler_owes = min(tyler_owes, MAX_DONUTS)
 
-            # --- Separator ---
-            matrix.drawHLine(21, 4, 59, (40, 40, 40))
+            uv = get_uv_index()
 
-            # --- Workout section ---
-            matrix.drawText(f"Day {day}", "medium", (center_text(f"Day {day}"), 32), (220, 220, 220))
-            matrix.drawText(workout, "medium", (center_text(workout), 43), (180, 180, 180))
-            matrix.drawText(time_str, "medium", (center_text(time_str), 54), (80, 80, 80))
+            # === Section 1: Donut Counter (rows 0-25) ===
+            # Labels
+            matrix.drawText("MICHAEL", "small",
+                            (center_text_in_half("MICHAEL", 0), 7),
+                            (220, 140, 40))
+            matrix.drawText("TYLER", "small",
+                            (center_text_in_half("TYLER", 32), 7),
+                            (40, 140, 220))
+
+            # Bar graphs (rows 9-23, 15px tall)
+            draw_bar(matrix, 6, 9, 15, 15, michael_owes, MAX_DONUTS,
+                     (220, 140, 40), (50, 50, 50))
+            draw_bar(matrix, 43, 9, 15, 15, tyler_owes, MAX_DONUTS,
+                     (40, 140, 220), (50, 50, 50))
+
+            # Donut icon centered between bars
+            matrix.drawSprite(DONUT_SPRITE, 28, 12)
+
+            # Count numbers below bars
+            m_str = str(michael_owes)
+            t_str = str(tyler_owes)
+            matrix.drawText(m_str, "small",
+                            (center_text_in_half(m_str, 6, 15), 25),
+                            (200, 200, 200))
+            matrix.drawText(t_str, "small",
+                            (center_text_in_half(t_str, 43, 15), 25),
+                            (200, 200, 200))
+
+            # === Separator ===
+            matrix.drawHLine(26, 4, 59, (40, 40, 40))
+
+            # === Section 2: UV Index (rows 27-36) ===
+            uv_color = get_uv_color(uv)
+            matrix.drawText("UV", "small", (2, 34), (160, 160, 160))
+            matrix.drawText(str(uv), "medium", (14, 34), uv_color)
+            # Color bar
+            matrix.drawRect(2, 35, 60, 2, uv_color)
+
+            # === Separator ===
+            matrix.drawHLine(37, 4, 59, (40, 40, 40))
+
+            # === Section 3: Workout (rows 38-50) ===
+            day_str = f"Day {day}"
+            matrix.drawText(day_str, "medium",
+                            (center_text(day_str, font_size="medium"), 44),
+                            (220, 220, 220))
+            matrix.drawText(workout, "small",
+                            (center_text(workout, font_size="small"), 50),
+                            (180, 180, 180))
+
+            # === Section 4: Time (rows 51-63) ===
+            matrix.drawText(time_str, "medium",
+                            (center_text(time_str, font_size="medium"), 59),
+                            (80, 80, 80))
 
         except Exception as e:
             print(f"Exception: {e}")
 
         matrix.debugShow()
 
-        time.sleep(1)  # Update every second
+        time.sleep(1)
         matrix.clear()

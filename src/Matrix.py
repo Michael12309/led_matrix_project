@@ -57,6 +57,45 @@ class Matrix(object):
         else:
             self.draw.line([(x_start, y), (x_end, y)], fill=(color[0], color[1], color[2]))
 
+    def drawRect(self, x, y, width, height, color):
+        if not self.debug:
+            from rgbmatrix import graphics
+            c = graphics.Color(color[0], color[1], color[2])
+            for row in range(y, y + height):
+                graphics.DrawLine(self.matrix, x, row, x + width - 1, row, c)
+        else:
+            self.draw.rectangle(
+                [(x, y), (x + width - 1, y + height - 1)],
+                fill=(color[0], color[1], color[2])
+            )
+
+    def drawRectOutline(self, x, y, width, height, color):
+        if not self.debug:
+            from rgbmatrix import graphics
+            c = graphics.Color(color[0], color[1], color[2])
+            graphics.DrawLine(self.matrix, x, y, x + width - 1, y, c)
+            graphics.DrawLine(self.matrix, x, y + height - 1, x + width - 1, y + height - 1, c)
+            graphics.DrawLine(self.matrix, x, y, x, y + height - 1, c)
+            graphics.DrawLine(self.matrix, x + width - 1, y, x + width - 1, y + height - 1, c)
+        else:
+            self.draw.rectangle(
+                [(x, y), (x + width - 1, y + height - 1)],
+                outline=(color[0], color[1], color[2]),
+                fill=None
+            )
+
+    def drawPixel(self, x, y, color):
+        if not self.debug:
+            self.matrix.SetPixel(x, y, color[0], color[1], color[2])
+        else:
+            self.draw.point((x, y), fill=(color[0], color[1], color[2]))
+
+    def drawSprite(self, sprite_data, x_offset, y_offset):
+        for row_idx, row in enumerate(sprite_data):
+            for col_idx, pixel in enumerate(row):
+                if pixel is not None:
+                    self.drawPixel(x_offset + col_idx, y_offset + row_idx, pixel)
+
     def clear(self):
         if not self.debug:
             self.matrix.Clear()
