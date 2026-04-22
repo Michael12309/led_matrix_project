@@ -12,7 +12,7 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def center_text(text, matrix_width=64, font_size="small"):
     char_width = 3 if font_size == "small" else 5
-    char_spacing = 1
+    char_spacing = 1 if font_size == "small" else 0
     text_width = len(text) * char_width + (len(text) - 1) * char_spacing
     return max((matrix_width - text_width) // 2, 0)
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
                             (center_text_in_half("MICHAEL", 0), 7),
                             (220, 140, 40))
             matrix.drawText("TYLER", "small",
-                            (center_text_in_half("TYLER", 32), 7),
+                            (41, 7),
                             (40, 140, 220))
 
             # Bar graphs (rows 9-23, 15px tall)
@@ -102,29 +102,26 @@ if __name__ == "__main__":
                             (200, 200, 200))
 
             # === Separator ===
-            matrix.drawHLine(27, 4, 59, (40, 40, 40))
+            matrix.drawHLine(29, 4, 59, (40, 40, 40))
 
             # === Section 2: UV Index ===
             uv_color = get_uv_color(uv)
-            matrix.drawText("UV", "small", (2, 35), (160, 160, 160))
-            matrix.drawText(str(uv), "medium", (14, 35), uv_color)
-            matrix.drawRect(2, 37, 60, 2, uv_color)
+            matrix.drawText("UV", "small", (2, 37), (160, 160, 160))
+            matrix.drawText(str(uv), "medium", (14, 37), uv_color)
+            matrix.drawRect(2, 39, 60, 2, uv_color)
 
             # === Separator ===
-            matrix.drawHLine(40, 4, 59, (40, 40, 40))
+            matrix.drawHLine(43, 4, 59, (40, 40, 40))
 
             # === Section 3: Day Counter ===
             day_str = f"Day {day}"
             matrix.drawText(day_str, "medium",
-                            (center_text(day_str, font_size="medium"), 48),
+                            (center_text(day_str, font_size="medium"), 51),
                             (220, 220, 220))
-
-            # === Separator ===
-            matrix.drawHLine(52, 4, 59, (40, 40, 40))
 
             # === Section 4: Time ===
             matrix.drawText(time_str, "medium",
-                            (center_text(time_str, font_size="medium"), 60),
+                            (center_text(time_str, font_size="medium"), 61),
                             (80, 80, 80))
 
         except Exception as e:
