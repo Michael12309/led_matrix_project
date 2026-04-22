@@ -1,4 +1,5 @@
 #!/bin/bash
 
+sudo killall python
 cd src/
 sudo ../environment/bin/python main.py

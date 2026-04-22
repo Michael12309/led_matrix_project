@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     # Split
     workout_split = [ "Push", "Run/Mobility", "Pull", "Legs" ]
-    workout_split_seed = 1
+    workout_split_seed = 2
 
     # Start date: October 2, 2025
     start_date = datetime.datetime(2025, 10, 2, 0, 0, 0)
