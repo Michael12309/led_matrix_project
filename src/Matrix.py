@@ -1,4 +1,8 @@
+import os
 from PIL import Image, ImageFont, ImageDraw
+
+_PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_FONTS_DIR = os.path.join(_PROJECT_DIR, 'assets', 'fonts')
 
 class Matrix(object):
     def __init__(self, width, height, brightness=100, debug=False):
@@ -22,15 +26,15 @@ class Matrix(object):
             self.matrix = RGBMatrix(options=options)
         
             self.font_medium = graphics.Font()
-            self.font_medium.LoadFont("../assets/fonts/5x7.bdf")
+            self.font_medium.LoadFont(os.path.join(_FONTS_DIR, "5x7.bdf"))
 
             self.font_small = graphics.Font()
-            self.font_small.LoadFont("../assets/fonts/4x6.bdf")
+            self.font_small.LoadFont(os.path.join(_FONTS_DIR, "4x6.bdf"))
         else:
             self.led_board = Image.new(mode='RGB', size=(self.width, self.height), color=(0,0,0))
             self.draw = ImageDraw.Draw(self.led_board)
-            self.debug_font_medium = ImageFont.load("../assets/fonts/5x7.pil")
-            self.debug_font_small = ImageFont.load("../assets/fonts/4x6.pil")
+            self.debug_font_medium = ImageFont.load(os.path.join(_FONTS_DIR, "5x7.pil"))
+            self.debug_font_small = ImageFont.load(os.path.join(_FONTS_DIR, "4x6.pil"))
 
     def drawImage(self, img, pos):
         if not self.debug:

@@ -1,11 +1,14 @@
 from utils import args
 import time
+import os
 from Matrix import Matrix
 from datetime import date
 import datetime
 from PIL import Image
 from donut_store import load_donuts
 from uv_fetch import get_uv_index
+
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def center_text(text, matrix_width=64, font_size="small"):
     char_width = 3 if font_size == "small" else 5
@@ -55,7 +58,7 @@ if __name__ == "__main__":
     MAX_DONUTS = 10
 
     # Load donut image
-    donut_img = Image.open("../assets/donut_14x14.png")
+    donut_img = Image.open(os.path.join(PROJECT_DIR, 'assets', 'donut_14x14.png'))
 
     while True:
         try:

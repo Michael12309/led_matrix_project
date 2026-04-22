@@ -1,7 +1,7 @@
 import json
 import os
 
-DONUT_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', 'donuts.json')
+DONUT_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'donuts.json')
 
 def load_donuts():
     try:
