@@ -1,58 +1,39 @@
 from utils import args
 import time
-import io
+from datetime import datetime
 from Matrix import Matrix
-from datetime import date
-from datetime import timedelta
-import requests
-import datetime
+from cards import CardRenderer
+from scheduler import Scheduler
 
-def center_text(text, matrix_width=64, char_width=4, char_spacing=1):
-    text_width = len(text) * char_width + (len(text) - 1) * char_spacing
-    x_position = (matrix_width - text_width) // 2
-    return x_position
+FPS = 20
 
 if __name__ == "__main__":
     cliArgs = args()
 
     matrix_width = 64
     matrix_height = 64
+
+    # Load fonts before Matrix init (rgbmatrix drops root privileges to UID 1)
+    renderer = CardRenderer(matrix_width, matrix_height)
+    start_date = datetime.combine(cliArgs.start_date, datetime.min.time())
+    scheduler = Scheduler(start_date, cliArgs.days_per_lesson, cliArgs.think, cliArgs.answer)
+
     matrix = Matrix(matrix_width, matrix_height,
                     brightness=cliArgs.led_brightness, debug=cliArgs.debug)
 
-
-
-    # Split
-    workout_split = [ "Push", "Run/Mobility", "Pull", "Legs" ]
-    workout_split_seed = 1
-
-    # Start date: October 2, 2025
-    start_date = datetime.datetime(2025, 10, 2, 0, 0, 0)
-
-
-    while True:
-        try:
-            current_time = datetime.datetime.now()
-            elapsed = current_time - start_date
-            
-            total_seconds = int(elapsed.total_seconds())
-            day = (elapsed.days) + 1
-            week = (day // 7) + 1
-            month = (day // 30) + 1
-            
-            time_str = current_time.strftime('%I:%M:%S %p')
-
-            # Display
-            matrix.drawText(f"Day {day}", "medium", (center_text(f"Day {day}"), 10), (178, 34, 52))
-            matrix.drawText(f"Week {week}", "medium", (center_text(f"Week {week}"), 20), (255, 255, 255))
-            matrix.drawText(f"Month {month}", "medium", (center_text(f"Month {month}"), 30), (60, 59, 110))
-            matrix.drawText(f"{workout_split[(day + workout_split_seed) % len(workout_split)]}", "medium", (center_text(workout_split[(day + workout_split_seed) % len(workout_split)]), 50), (255, 255, 255))
-            matrix.drawText(f"{time_str}", "medium", (center_text(time_str), 60), (160, 160, 160))
-            
-        except Exception as e:
-            print(f"Exception: {e}")
-
-        matrix.debugShow()
-        
-        time.sleep(1)  # Update every second
+    try:
+        while True:
+            try:
+                card = scheduler.next_card(datetime.now())
+                duration = renderer.duration(card)
+                start = time.monotonic()
+                t = 0
+                while t < duration:
+                    matrix.show(renderer.render(card, t))
+                    time.sleep(1 / FPS)
+                    t = time.monotonic() - start
+            except Exception as e:
+                print(f"Exception: {e}")
+                time.sleep(1)
+    except KeyboardInterrupt:
         matrix.clear()
